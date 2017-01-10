@@ -10,97 +10,150 @@
 <body>
 
     <canvas id="myCanvas" width="480" height="320"></canvas>
+    <input style=""type="button" id="start" value="Start" />
+</body>
 
-    <script>
-        var canvas = document.getElementById('myCanvas');
-        var ctx = canvas.getContext('2d');
+</html>
+<script>
 
-        //arrow keys
-        var rightPressed = false;
-        var leftPressed = false;
-        var upPressed = false;
-        var downPressed = false;
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    ctx.font = "30px Georgia";
+    ctx.fillText("The Legend of The Red Square", 40, 160);
+    ctx.font = "10px Georgia";
+    ctx.fillText("Press Start", 240, 190);
+    //arrow keys
+    var rightPressed = false;
+    var leftPressed = false;
+    var upPressed = false;
+    var downPressed = false;
 
 
-        //classe personagem
-        var personagem = {
-            x: 0,
-            y: 0,
-            velocidade: 1,
-            largura: 50,
-            altura: 50,
+    //classe personagem
+    var personagem = {
+        x: 0,
+        y: 0,
+        velocidade: 1,
+        largura: 50,
+        altura: 50,
 
-            desenharPersonagem: function () {
-                ctx.beginPath();
-                ctx.rect(this.x, this.y,this.largura, this.altura);
-                ctx.fillStyle = "#FF0000";
-                ctx.fill();
-                ctx.closePath();
-            },
-        };
+        desenharPersonagem: function () {
+            ctx.beginPath();
+            ctx.rect(this.x, this.y, this.largura, this.altura);
+            ctx.fillStyle = "#FF0000";
+            ctx.fill();
+            ctx.closePath();
+        },
+    };
 
-        var obstaculo = {
-            x: 0,
-            y:0,
-            largura: 0,
-            altura:0,
-        }
+    var inimigo = {
+        x: 190,
+        y: 0,
+        velocidade: 1,
+        largura: 50,
+        altura: 50,
 
-        document.addEventListener("keydown", keyDownHandler, false);
-        document.addEventListener("keyup", keyUpHandler, false);
-
-        function keyDownHandler(e) {
-            if (e.keyCode == 39) {
-                rightPressed = true;
-            }
-            if (e.keyCode == 37) {
-                leftPressed = true;
-            }
-            if (e.keyCode == 38) {
-                upPressed = true;
-            }
-            if (e.keyCode == 40) {
-                downPressed = true;
-            }
-        }
-        function keyUpHandler(e) {
-            if (e.keyCode == 39) {
-                rightPressed = false;
+        desenharInimigo: function () {
+            ctx.beginPath();
+            ctx.rect(this.x, this.y, this.largura, this.altura);
+            ctx.fillStyle = "#000000";
+            ctx.fill();
+            ctx.closePath();
+        },
+        perseguir: function () {
+            if (personagem.x > inimigo.x) {
+                inimigo.x += inimigo.velocidade;
             }
 
-            if (e.keyCode == 37) {
-                leftPressed = false;
+            if (personagem.x < inimigo.x) {
+                inimigo.x -= inimigo.velocidade;
             }
-
-            if (e.keyCode == 38) {
-                upPressed = false;
+            if (personagem.y > inimigo.y) {
+                inimigo.y += inimigo.velocidade;
             }
-
-            if (e.keyCode == 40) {
-                downPressed = false;
+            if (personagem.y < inimigo.y) {
+                inimigo.y -= inimigo.velocidade;
             }
         }
+    };
+    var obstaculo = {
+        x: 0,
+        y: 0,
+        largura: 0,
+        altura: 0,
+    }
 
-        //método main
-        function desenhar() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-           // personagem.velocidade = 10;
-            //limites
-            if (rightPressed && personagem.x < (canvas.width - personagem.largura)) {
-                personagem.x +=personagem.velocidade;
-            }
-            if (leftPressed && personagem.x > (canvas.width - canvas.width)) {
-                personagem.x-=personagem.velocidade;
-            }
-            if (upPressed && personagem.y > (canvas.height - canvas.height)) {
-                personagem.y-=personagem.velocidade;
-            }
-            if (downPressed && personagem.y < (canvas.height - personagem.altura)) {
-                personagem.y+=personagem.velocidade;
-            }
-            personagem.desenharPersonagem();
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if (e.keyCode == 39) {
+            rightPressed = true;
+        }
+        if (e.keyCode == 37) {
+            leftPressed = true;
+        }
+        if (e.keyCode == 38) {
+            upPressed = true;
+        }
+        if (e.keyCode == 40) {
+            downPressed = true;
+        }
+    }
+    function keyUpHandler(e) {
+        if (e.keyCode == 39) {
+            rightPressed = false;
         }
 
-        //thread 
-        setInterval(desenhar, 10);
-    </script>
+        if (e.keyCode == 37) {
+            leftPressed = false;
+        }
+
+        if (e.keyCode == 38) {
+            upPressed = false;
+        }
+
+        if (e.keyCode == 40) {
+            downPressed = false;
+        }
+    }
+
+    function gameOver() {
+        clearInterval(start);
+        console.log("Game Over");
+        ctx.font = "30px Georgia";
+        ctx.fillText("Wasted!", 40, 160);
+    }
+    //método main
+    function desenhar() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        personagem.velocidade = 2;
+        inimigo.velocidade = 1;
+        //limites
+        if (rightPressed && personagem.x < (canvas.width - personagem.largura)) {
+            personagem.x += personagem.velocidade;
+        }
+        if (leftPressed && personagem.x > (canvas.width - canvas.width)) {
+            personagem.x -= personagem.velocidade;
+        }
+        if (upPressed && personagem.y > (canvas.height - canvas.height)) {
+            personagem.y -= personagem.velocidade;
+        }
+        if (downPressed && personagem.y < (canvas.height - personagem.altura)) {
+            personagem.y += personagem.velocidade;
+        }
+        personagem.desenharPersonagem();
+        inimigo.desenharInimigo();
+        inimigo.perseguir();
+        if (personagem.x == inimigo.x && personagem.y == inimigo.y) {
+            gameOver();
+        }
+
+    }
+
+    document.getElementById("start").addEventListener("click", startGame, false);
+    //thread 
+    function startGame() {
+        start = setInterval(desenhar, 10);
+    }
+</script>
