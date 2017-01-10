@@ -46,36 +46,47 @@
         },
     };
 
-    var inimigo = {
-        x: 190,
-        y: 0,
-        velocidade: 1,
-        largura: 50,
-        altura: 50,
+    var Inimigo = class {
 
-        desenharInimigo: function () {
+        constructor(x,y,velocidade,largura,altura,cor){
+            this.x = x;
+            this.y = y;
+            this.velocidade = velocidade;
+            this.largura = largura;
+            this.altura = altura;
+            this.cor = cor;
+       //var x = 190;
+       //var y = 0;
+       //var velocidade =  1;
+       //var largura = 50;
+       //var altura = 50;
+        }
+
+
+         desenharInimigo () {
             ctx.beginPath();
             ctx.rect(this.x, this.y, this.largura, this.altura);
-            ctx.fillStyle = "#000000";
+            ctx.fillStyle = this.cor;
             ctx.fill();
             ctx.closePath();
-        },
-        perseguir: function () {
-            if (personagem.x > inimigo.x) {
-                inimigo.x += inimigo.velocidade;
+        }
+        perseguir () {
+            if (personagem.x > this.x) {
+                this.x += this.velocidade;
             }
 
-            if (personagem.x < inimigo.x) {
-                inimigo.x -= inimigo.velocidade;
+            if (personagem.x < this.x) {
+                this.x -= this.velocidade;
             }
-            if (personagem.y > inimigo.y) {
-                inimigo.y += inimigo.velocidade;
+            if (personagem.y > this.y) {
+                this.y += this.velocidade;
             }
-            if (personagem.y < inimigo.y) {
-                inimigo.y -= inimigo.velocidade;
+            if (personagem.y < this.y) {
+                this.y -= this.velocidade;
             }
         }
-    };
+    }
+
     var obstaculo = {
         x: 0,
         y: 0,
@@ -124,11 +135,20 @@
         ctx.font = "30px Georgia";
         ctx.fillText("Wasted!", 40, 160);
     }
+
+    function gameOverCheck(Inimigo){
+        if (personagem.x == Inimigo.x && personagem.y == Inimigo.y) {
+         gameOver();
+        }
+    }
     //método main
+
+    var inimigo = new Inimigo(190,0,1,50,50,"#000000");
+    var inimigo2 = new Inimigo(100,100,0.7,70,70,"#2325a8");
+    var inimigo3 = new Inimigo(200,1,1.5,20,20,"#a82323");
     function desenhar() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         personagem.velocidade = 2;
-        inimigo.velocidade = 1;
         //limites
         if (rightPressed && personagem.x < (canvas.width - personagem.largura)) {
             personagem.x += personagem.velocidade;
@@ -143,12 +163,22 @@
             personagem.y += personagem.velocidade;
         }
         personagem.desenharPersonagem();
+               //var x = 190;
+       //var y = 0;
+       //var velocidade =  1;
+       //var largura = 50;
+       //var altura = 50;
         inimigo.desenharInimigo();
-        inimigo.perseguir();
-        if (personagem.x == inimigo.x && personagem.y == inimigo.y) {
-            gameOver();
-        }
+        inimigo2.desenharInimigo();
+        inimigo3.desenharInimigo();
 
+        inimigo.perseguir();
+        inimigo2.perseguir();
+        inimigo3.perseguir();
+
+        gameOverCheck(inimigo);
+        gameOverCheck(inimigo2);
+        gameOverCheck(inimigo3);
     }
 
     document.getElementById("start").addEventListener("click", startGame, false);
