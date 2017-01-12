@@ -27,7 +27,7 @@
     var leftPressed = false;
     var upPressed = false;
     var downPressed = false;
-
+    var colisao = false;
 
     //classe personagem
     var personagem = {
@@ -48,29 +48,29 @@
 
     var Inimigo = class {
 
-        constructor(x,y,velocidade,largura,altura,cor){
+        constructor(x, y, velocidade, largura, altura, cor) {
             this.x = x;
             this.y = y;
             this.velocidade = velocidade;
             this.largura = largura;
             this.altura = altura;
             this.cor = cor;
-       //var x = 190;
-       //var y = 0;
-       //var velocidade =  1;
-       //var largura = 50;
-       //var altura = 50;
+            //var x = 190;
+            //var y = 0;
+            //var velocidade =  1;
+            //var largura = 50;
+            //var altura = 50;
         }
 
 
-         desenharInimigo () {
+        desenharInimigo() {
             ctx.beginPath();
             ctx.rect(this.x, this.y, this.largura, this.altura);
-            ctx.fillStyle = this.cor;
+           /ctx.fillStyle = this.cor;
             ctx.fill();
             ctx.closePath();
         }
-        perseguir () {
+        perseguir() {
             if (personagem.x > this.x) {
                 this.x += this.velocidade;
             }
@@ -110,6 +110,9 @@
         if (e.keyCode == 40) {
             downPressed = true;
         }
+        if (e.keyCode == 13) {
+            startGame();
+        }
     }
     function keyUpHandler(e) {
         if (e.keyCode == 39) {
@@ -133,24 +136,47 @@
         clearInterval(start);
         console.log("Game Over");
         ctx.font = "30px Georgia";
-        ctx.fillText("Wasted!", 40, 160);
+        ctx.fillText("Wasted!", 200, 160);
+        canvas.addEventListener("click", startGame, false);
     }
+    function gameOverCheck(Inimigo) {
+        var hitX = false;
+        var hitY = false;
+        if (((personagem.x == Inimigo.x + Inimigo.largura || personagem.x == Inimigo.x - Inimigo.largura) && (personagem.y == Inimigo.y))) {
+            hitX = true;
+            console.log("X: " + hitX);
+            console.log("inimigo.x: " + Inimigo.y);
+            console.log("personagem.x: " + personagem.y);
+            // gameOver();
+        }
 
-    function gameOverCheck(Inimigo){
+        if (((personagem.y == Inimigo.y + Inimigo.altura || personagem.y == Inimigo.y - Inimigo.altura) && (personagem.x == Inimigo.x))) {
+            hitY = true;
+            console.log("Y: " + hitX);
+            console.log(Inimigo + " inimigo.y: " + Inimigo.y);
+            console.log("personagem.y: " + personagem.y);
+            // gameOver();
+        }
         if (personagem.x == Inimigo.x && personagem.y == Inimigo.y) {
-         gameOver();
+            gameOver();
+        }
+
+        if (hitX || hitY) {
+            gameOver();
         }
     }
     //método main
 
-    var inimigo = new Inimigo(190,0,1,50,50,"#000000");
-    var inimigo2 = new Inimigo(100,100,0.7,70,70,"#2325a8");
-    var inimigo3 = new Inimigo(200,1,1.5,20,20,"#a82323");
+
+    var inimigo  = new Inimigo(190, 140, 1, 50, 50, "#000000");
+    var inimigo2 = new Inimigo(100, 100, 0.7, 50, 50, "#2325a8");
+    var inimigo3 = new Inimigo(200, 120, 1.5, 50, 50, "#a82323");
+    var inimigo4 = new Inimigo(200, 200, 1.7, 50, 50, "#a82323");
     function desenhar() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         personagem.velocidade = 2;
         //limites
-        if (rightPressed && personagem.x < (canvas.width - personagem.largura)) {
+        if (rightPressed && personagem.x < (canvas.width - personagem.largura) && !colisao) {
             personagem.x += personagem.velocidade;
         }
         if (leftPressed && personagem.x > (canvas.width - canvas.width)) {
@@ -163,22 +189,25 @@
             personagem.y += personagem.velocidade;
         }
         personagem.desenharPersonagem();
-               //var x = 190;
-       //var y = 0;
-       //var velocidade =  1;
-       //var largura = 50;
-       //var altura = 50;
+        //var x = 190;
+        //var y = 0;
+        //var velocidade =  1;
+        //var largura = 50;
+        //var altura = 50;
         inimigo.desenharInimigo();
         inimigo2.desenharInimigo();
         inimigo3.desenharInimigo();
+        inimigo4.desenharInimigo();
 
         inimigo.perseguir();
         inimigo2.perseguir();
         inimigo3.perseguir();
+        inimigo4.perseguir();
 
         gameOverCheck(inimigo);
         gameOverCheck(inimigo2);
         gameOverCheck(inimigo3);
+        gameOverCheck(inimigo4);
     }
 
     document.getElementById("start").addEventListener("click", startGame, false);
